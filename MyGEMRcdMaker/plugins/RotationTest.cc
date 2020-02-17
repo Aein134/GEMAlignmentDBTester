@@ -144,8 +144,9 @@ RotationTest::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // 1 det id for chamber with roll=0
   // 1 det id for the superchamber with layer=0, roll=0
   //
-
+  int count = 0;
   for (auto sch : gemGeo->superChambers()) {
+    count++;
     std::cout << "sch->id() " << sch->id() << std::endl;
     for (auto ch : sch->chambers()){
       std::cout << "ch->id() " << ch->id() << std::endl;
@@ -195,6 +196,8 @@ RotationTest::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     auto euler = hrot.inverse().eulerAngles();
     MyGEMAlignment->m_align.push_back(AlignTransform(AlignTransform::Translation(center.x(), center.y(), center.z()), euler, sch->id()));
     MyGEMAlignmentErrorExtended->m_alignError.push_back(AlignTransformErrorExtended(AlignTransformErrorExtended::SymMatrix(6), sch->id()));
+
+  std::cout << "count is " << count << std::endl;
   }
 
 

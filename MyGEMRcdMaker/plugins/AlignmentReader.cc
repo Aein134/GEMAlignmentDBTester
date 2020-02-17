@@ -145,35 +145,40 @@ AlignmentReader::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   // 1 det id for the superchamber with layer=0, roll=0
   //
 
-  int detNum;
-  std::string line, cell;
+  int detNum; int endcap;
+  std::string line, cell, DetNum, dx, dy, dz, dphix, dphiy, dphiz;
   std::ifstream maptype("gemAl.csv");
   while(std::getline(maptype, line)){
     std::cout << line << std::endl;
     std::stringstream ssline(line);
 
-    getline(ssline, cell, ',');
-    std::stringstream DetNum(cell);
-    getline(ssline, cell, ',');
-    std::stringstream dx(cell);
-    getline(ssline, cell, ',');
-    std::stringstream dy(cell);
-    getline(ssline, cell, ',');
-    std::stringstream dz(cell);
-    getline(ssline, cell, ',');
-    std::stringstream dphix(cell);
-    getline(ssline, cell, ',');
-    std::stringstream dphiy(cell);
-    getline(ssline, cell, ',');
-    std::stringstream dphiz(cell);
-    DetNum >> detNum; dx >> xShift; dy >> yShift; dz >> zShift; dphix >> rotX; dphiy >> rotY; dphiz >> rotZ;
+    getline(ssline, DetNum, ',');
+    getline(ssline, dx, ',');
+    getline(ssline, dy, ',');
+    getline(ssline, dz, ',');
+    getline(ssline, dphix, ',');
+    getline(ssline, dphiy, ',');
+    getline(ssline, dphiz, ',');
+    //DetNum >> detNum; dx >> xShift; dy >> yShift; dz >> zShift; dphix >> rotX; dphiy >> rotY; dphiz >> rotZ;
+    detNum = (float)atof(DetNum.c_str());
+    xShift = (float)atof(dx.c_str());
+    yShift = (float)atof(dy.c_str());
+    zShift = (float)atof(dz.c_str());
+    rotX = (float)atof(dphix.c_str());
+    rotY = (float)atof(dphiy.c_str());
+    rotZ = (float)atof(dphiz.c_str());
     std::cout << detNum << xShift << yShift << zShift << rotX << rotY << rotZ << std::endl;
-
-    GEMDetId id = GEMDetId(detNum/100, 1, 1, 0, abs(detNum%100), 0);
+    if (detNum >= 0){endcap = 1;}
+    else {endcap = -1;}
+    std::cout << "endcap is " << endcap << std::endl;
+    GEMDetId id = GEMDetId(endcap, 1, abs(detNum/100), 0, abs(detNum%100), 0);
     auto sch = gemGeo->superChamber(id);
+    std::cout << "sch->id() " << sch->id() << std::endl;
     for (auto ch : sch->chambers()){
+      std::cout << "ch->id() " << ch->id() << std::endl;
       const BoundPlane& chSurface(ch->surface());
       for (auto roll : ch->etaPartitions()){
+        std::cout << "roll->id() " << roll->id() << std::endl;
         auto center = roll->surface().toGlobal(LocalPoint(xShift, yShift, zShift));
         auto rot = roll->surface().rotation();
         auto hrot = HepRotation(Hep3Vector(rot.xx(), rot.xy(), rot.xz()).unit(),

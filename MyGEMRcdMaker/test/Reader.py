@@ -1,17 +1,32 @@
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process("MyGEMAlignmentRcdWriter")
+
+############################test
+from Configuration.Eras.Era_Run3_cff import Run3
+process = cms.Process("MyGEMAlignmentRcdWriter", Run3)
+
+
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+#################################
+
+
+#process = cms.Process("MyGEMAlignmentRcdWriter")
 
 # Load CondDB service
 process.load("CondCore.CondDB.CondDB_cfi")
 
-process.load('Configuration.Geometry.GeometryExtended2023D17Reco_cff')
+#process.load('Configuration.Geometry.GeometryExtended2026D49Reco_cff')
+
 #process.load('Configuration.Geometry.GeometryExtended2021Reco_cff')
 #process.load("Geometry.CMSCommonData.cmsExtendedGeometry2023D39XML_cfi")
 process.load("Geometry.MuonNumbering.muonNumberingInitialization_cfi")
 process.load("Geometry.GEMGeometryBuilder.gemGeometry_cfi")
 process.GEMGeometryESModule.applyAlignment = cms.bool(False)
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2021_realistic', '')
+
 #from Configuration.AlCa.GlobalTag import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 

@@ -167,7 +167,7 @@ AlignmentReader::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     rotX = (float)atof(dphix.c_str());
     rotY = (float)atof(dphiy.c_str());
     rotZ = (float)atof(dphiz.c_str());
-    std::cout << detNum << xShift << yShift << zShift << rotX << rotY << rotZ << std::endl;
+    std::cout << "detNum:" << detNum << " xShift:" << xShift << " yShift:" << yShift << " zShift:" << zShift << " rotX:" << rotX << " rotY:" << rotY << " rotZ:" << rotZ << std::endl;
     if (detNum >= 0){endcap = 1;}
     else {endcap = -1;}
     std::cout << "endcap is " << endcap << std::endl;

@@ -5,7 +5,7 @@ process = cms.Process("MyGEMAlignmentRcdWriter")
 # Load CondDB service
 process.load("CondCore.CondDB.CondDB_cfi")
 
-process.load('Configuration.Geometry.GeometryExtended2023D17Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2026D49Reco_cff')
 #process.load('Configuration.Geometry.GeometryExtended2021Reco_cff')
 #process.load("Geometry.CMSCommonData.cmsExtendedGeometry2023D39XML_cfi")
 process.load("Geometry.MuonNumbering.muonNumberingInitialization_cfi")
@@ -51,12 +51,12 @@ process.gem_maker = cms.EDAnalyzer("RotationTest",
     Source=cms.PSet(
         IOVRun=cms.untracked.uint32(1)
     ),
-    xShift = cms.double(1),		#Shift (cm)
+    xShift = cms.double(0),		#Shift (cm)
     yShift = cms.double(0),
     zShift = cms.double(0),
     rotX = cms.double(0),		#Shift (Radians)
     rotY = cms.double(0),
-    rotZ = cms.double(3.14159265*1/180)
+    rotZ = cms.double(0)
 )
 
 process.path = cms.Path(process.gem_maker)

@@ -1,40 +1,39 @@
 import FWCore.ParameterSet.Config as cms
 
+#process = cms.Process("MyGEMAlignmentRcdWriter")
+#process.load('Configuration.Geometry.GeometryExtended2021_cff')
 
-############################test
 from Configuration.Eras.Era_Run3_cff import Run3
-process = cms.Process("MyGEMAlignmentRcdWriter", Run3)
+
+process = cms.Process('SIM2RAW',Run3)
 
 
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
-#################################
+process.load('Configuration.StandardSequences.GeometrySimDB_cff')
 
-
-#process = cms.Process("MyGEMAlignmentRcdWriter")
-
-# Load CondDB service
-process.load("CondCore.CondDB.CondDB_cfi")
-
-#process.load('Configuration.Geometry.GeometryExtended2026D49Reco_cff')
-
-#process.load('Configuration.Geometry.GeometryExtended2021Reco_cff')
-#process.load("Geometry.CMSCommonData.cmsExtendedGeometry2023D39XML_cfi")
+process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.load("Geometry.MuonNumbering.muonNumberingInitialization_cfi")
-process.load("Geometry.GEMGeometryBuilder.gemGeometry_cfi")
-process.GEMGeometryESModule.applyAlignment = cms.bool(False)
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+process.GEMGeometryESProducer = cms.ESProducer("GEMGeometryESModule",
+                                               DDDetector = cms.ESInputTag('',''),
+                                               applyAlignment = cms.bool(False),
+                                               alignmentsLabel = cms.string(''),
+                                               attribute = cms.string('MuStructure'),
+                                               value = cms.string('MuonEndCapGEM'),
+                                               useDDD = cms.bool(True),
+                                               useDD4hep = cms.untracked.bool(False)                                        
+                                               )
+process.DDSpecParRegistryESProducer = cms.ESProducer("DDSpecParRegistryESProducer",
+                                                     appendToDataLabel = cms.string('MUON')
+                                                     )
+process.MuonNumberingESProducer = cms.ESProducer("MuonNumberingESProducer",
+                                                 label = cms.string('MUON'),
+                                                 key = cms.string('MuonCommonNumbering')
+                                                 )
 
-from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2021_realistic', '')
-
-#from Configuration.AlCa.GlobalTag import GlobalTag
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
-
-# output database (in this case local sqlite file)
+process.load("CondCore.CondDB.CondDB_cfi")
 process.OutDB = process.CondDB.clone()
 process.OutDB.connect = 'sqlite_file:GEMAl.db'
 
-# A data source must always be defined. We don't need it, so here's a dummy one.
 process.source = cms.Source("EmptyIOVSource",
     timetype = cms.string('runnumber'),
     firstValue = cms.uint64(1),
@@ -42,7 +41,6 @@ process.source = cms.Source("EmptyIOVSource",
     interval = cms.uint64(1)
 )
 
-# We define the output service.
 process.PoolDBOutputService = cms.Service("PoolDBOutputService",
     process.OutDB,
     timetype = cms.untracked.string('runnumber'),
@@ -50,10 +48,6 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
         record = cms.string('GEMAlignmentRcd'),
         tag = cms.string('GEMAlignment_test')
     ),
-    # cms.PSet(
-    #     record = cms.string('GEMAlignmentErrorRcd'),
-    #     tag = cms.string('myGEMAlignment_test')
-    # ),
     cms.PSet(
         record = cms.string('GEMAlignmentErrorExtendedRcd'),
         tag = cms.string('GEMAlignmentErrorExtended_test')

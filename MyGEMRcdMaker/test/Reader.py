@@ -12,7 +12,12 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.GeometrySimDB_cff')
 
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
-process.load("Geometry.MuonNumbering.muonNumberingInitialization_cfi")
+#process.load("Geometry.MuonNumbering.muonNumberingInitialization_cfi")
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2021_realistic', '')
+"""
 process.GEMGeometryESProducer = cms.ESProducer("GEMGeometryESModule",
                                                DDDetector = cms.ESInputTag('',''),
                                                applyAlignment = cms.bool(False),
@@ -29,7 +34,7 @@ process.MuonNumberingESProducer = cms.ESProducer("MuonNumberingESProducer",
                                                  label = cms.string('MUON'),
                                                  key = cms.string('MuonCommonNumbering')
                                                  )
-
+"""
 process.load("CondCore.CondDB.CondDB_cfi")
 process.OutDB = process.CondDB.clone()
 process.OutDB.connect = 'sqlite_file:GEMAl.db'

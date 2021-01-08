@@ -146,6 +146,7 @@ AlignmentReader::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   //
 
   int detNum; int endcap;
+  int count = 0;
   std::string line, cell, DetNum, dx, dy, dz, dphix, dphiy, dphiz;
   std::ifstream maptype("gemAl.csv");
   while(std::getline(maptype, line)){
@@ -201,6 +202,7 @@ AlignmentReader::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
         auto dP = newGP - oldGP;
         MyGEMAlignment->m_align.push_back(AlignTransform(AlignTransform::Translation(center.x()+dP.x(), center.y()+dP.y(), center.z()+dP.z()), euler, roll->id()));
         MyGEMAlignmentErrorExtended->m_alignError.push_back(AlignTransformErrorExtended(AlignTransformErrorExtended::SymMatrix(6), roll->id()));
+        count ++;
       }
       auto center = ch->surface().toGlobal(LocalPoint(xShift, yShift, zShift));
       auto rot = ch->surface().rotation();
@@ -221,6 +223,8 @@ AlignmentReader::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
     auto euler = hrot.inverse().eulerAngles();
     MyGEMAlignment->m_align.push_back(AlignTransform(AlignTransform::Translation(center.x(), center.y(), center.z()), euler, sch->id()));
     MyGEMAlignmentErrorExtended->m_alignError.push_back(AlignTransformErrorExtended(AlignTransformErrorExtended::SymMatrix(6), sch->id()));
+
+  std::cout << "count = " << count << std::endl;
 
   }
 
